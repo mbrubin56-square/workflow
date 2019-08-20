@@ -223,7 +223,11 @@ internal class WorkflowNode<PropsT, StateT, OutputT : Any, RenderingT>(
   ): Pair<StateT, ByteString> = parse { source ->
     val stateSnapshot = source.readByteStringWithLength()
     val childrenSnapshot = source.readByteString()
-    val state = workflow.initialState(input, Snapshot.of(stateSnapshot))
+    // Never pass an empty snapshot to initialState.
+    // TODO unit tests for this new behavior.
+    val nonEmptySnapshot = stateSnapshot.takeIf { it.size > 0 }
+        ?.let { Snapshot.of(it) }
+    val state = workflow.initialState(input, nonEmptySnapshot)
     return Pair(state, childrenSnapshot)
   }
 }
