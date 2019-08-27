@@ -59,11 +59,11 @@ final class ScreenWrapperViewController: UIViewController {
                 navigationItem.setLeftBarButton(nil, animated: true)
             }
 
-        case .some(let viewModel):
+        case .button(let button):
             if let leftItem = navigationItem.leftBarButtonItem as? CallbackBarButtonItem {
-                leftItem.update(with: viewModel)
+                leftItem.update(with: button)
             } else {
-                navigationItem.setLeftBarButton(CallbackBarButtonItem(viewModel: viewModel), animated: true)
+                navigationItem.setLeftBarButton(CallbackBarButtonItem(button: button), animated: true)
             }
 
         }
@@ -74,15 +74,22 @@ final class ScreenWrapperViewController: UIViewController {
                 navigationItem.setRightBarButton(nil, animated: true)
             }
 
-        case .some(let viewModel):
+        case .button(let button):
             if let rightItem = navigationItem.rightBarButtonItem as? CallbackBarButtonItem {
-                rightItem.update(with: viewModel)
+                rightItem.update(with: button)
             } else {
-                navigationItem.setRightBarButton(CallbackBarButtonItem(viewModel: viewModel), animated: true)
+                navigationItem.setRightBarButton(CallbackBarButtonItem(button: button), animated: true)
             }
         }
 
-        navigationItem.title = barContent.title
+        let title: String
+        switch barContent.title {
+        case .none:
+            title = ""
+        case .text(let text):
+            title = text
+        }
+        navigationItem.title = title
 
     }
 
@@ -95,31 +102,31 @@ final class ScreenWrapperViewController: UIViewController {
 final class CallbackBarButtonItem: UIBarButtonItem {
     var handler: () -> Void
 
-    init(viewModel: BackStackScreen.BarContent.BarButtonViewModel) {
+    init(button: BackStackScreen.BarContent.Button) {
         self.handler = {}
 
         super.init()
         self.target = self
         self.action = #selector(onTapped)
-        update(with: viewModel)
+        update(with: button)
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func update(with viewModel: BackStackScreen.BarContent.BarButtonViewModel) {
+    func update(with button: BackStackScreen.BarContent.Button) {
 
-        switch viewModel.labelType {
+        switch button.content {
 
         case .text(let title):
             self.title = title
 
-        case .image(let image):
+        case .icon(let image):
             self.image = image
         }
 
-        self.handler = viewModel.handler
+        self.handler = button.handler
     }
 
     @objc private func onTapped() {

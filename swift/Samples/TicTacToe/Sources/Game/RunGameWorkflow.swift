@@ -83,7 +83,8 @@ extension RunGameWorkflow {
             screen: newGameScreen(
                 sink: sink,
                 playerX: state.playerX,
-                playerO: state.playerO))]
+                playerO: state.playerO),
+            barVisibility: .hidden)]
         switch state.step {
         case .newGame:
             break
@@ -96,8 +97,8 @@ extension RunGameWorkflow {
             backStackItems.append(BackStackScreen.Item(
                 screen: takeTurnsScreen,
                 barVisibility: .visible(BackStackScreen.BarContent(
-                    leftItem: BackStackScreen.BarContent.BarButtonItem.some(BackStackScreen.BarContent.BarButtonViewModel(
-                        labelType: .text("Quit"),
+                    leftItem: BackStackScreen.BarContent.BarButtonItem.button(BackStackScreen.BarContent.Button(
+                        content: .text("Quit"),
                         handler: {
                             sink.send(.back)
                         }))))))

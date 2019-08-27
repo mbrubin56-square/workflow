@@ -233,8 +233,8 @@ extension AuthenticationWorkflow {
         return BackStackScreen.Item(
             screen: twoFactorScreen,
             barVisibility: .visible(BackStackScreen.BarContent(
-                leftItem: BackStackScreen.BarContent.BarButtonItem.some(BackStackScreen.BarContent.BarButtonViewModel(
-                    labelType: .text("Cancel"),
+                leftItem: BackStackScreen.BarContent.BarButtonItem.button(BackStackScreen.BarContent.Button(
+                    content: .text("Cancel"),
                     handler: {
                         sink.send(.back)
                 })))))

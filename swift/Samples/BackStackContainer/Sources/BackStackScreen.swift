@@ -10,10 +10,11 @@ public struct BackStackScreen: Screen {
 }
 
 extension BackStackScreen {
+    /// A specific item in the back stack. The key and screen type is used to differentiate reused vs replaced screens.
     public struct Item {
+        public var key: AnyHashable
         public var screen: AnyScreen
         var screenType: Any.Type
-        public var key: AnyHashable
         public var barVisibility: BarVisibility
 
         public init<ScreenType: Screen, Key: Hashable>(key: Key?, screen: ScreenType, barVisibility: BarVisibility) {
@@ -37,18 +38,19 @@ extension BackStackScreen {
             self.init(key: key, screen: screen, barVisibility: .visible(barContent))
         }
 
-        public init<ScreenType: Screen, Key: Hashable>(screen: ScreenType, key: Key?) {
+        public init<ScreenType: Screen>(screen: ScreenType, barContent: BackStackScreen.BarContent) {
+            let key = Optional<AnyHashable>.none
+            self.init(key: key, screen: screen, barContent: barContent)
+        }
+
+        public init<ScreenType: Screen, Key: Hashable>(key: Key?, screen: ScreenType) {
             let barVisibility: BarVisibility = .visible(BarContent())
             self.init(key: key, screen: screen, barVisibility: barVisibility)
         }
 
         public init<ScreenType: Screen>(screen: ScreenType) {
             let key = Optional<AnyHashable>.none
-            self.init(screen: screen, key: key)
-        }
-
-        fileprivate func isEquivalent(to otherScreen: BackStackScreen.Item) -> Bool {
-            return self.key == otherScreen.key
+            self.init(key: key, screen: screen)
         }
     }
 }
@@ -63,81 +65,52 @@ extension BackStackScreen {
 
 extension BackStackScreen {
     public struct BarContent {
+        var title: Title
         var leftItem: BarButtonItem
-        var title: String
         var rightItem: BarButtonItem
 
         public enum BarButtonItem {
             case none
-            case some(BarButtonViewModel)
+            case button(Button)
         }
 
-        // HAX HAX HAX: Getting the tutorial to build. Refactor as appropriate plz kthnxbye.
-        public enum LeftItem {
-            case back(handler: () -> Void)
-            case item(BarButtonItem)
-        }
-
-        public enum RightItem {
-            public enum Content {
-                case text(String)
-            }
-            case none
-            case button(content: Content, handler: () -> Void)
-            case item(BarButtonItem)
-        }
-
-        public init(leftItem: BarButtonItem = .none, title: String = "", rightItem: BarButtonItem = .none) {
-            self.leftItem = leftItem
+        public init(title: Title = .none, leftItem: BarButtonItem = .none, rightItem: BarButtonItem = .none) {
             self.title = title
+            self.leftItem = leftItem
             self.rightItem = rightItem
         }
 
-        public init(title: String = "", leftItem: LeftItem, rightItem: RightItem = .none) {
-            let left: BarButtonItem
-            switch leftItem {
-            case .back(let handler):
-                left = .some(BackStackScreen.BarContent.BarButtonViewModel(
-                    labelType: .text("Back"),
-                    handler: handler))
-            case .item(let item):
-                left = item
-            }
-
-            let right: BarButtonItem
-            switch rightItem {
-
-            case .none:
-                right = .none
-
-            case .item(let item):
-                right = item
-
-            case .button(content: let content, handler: let handler):
-                let label: BarButtonViewModel.LabelType
-                switch content {
-                case .text(let text):
-                    label = .text(text)
-                }
-                right = .some(BarButtonViewModel(labelType: label, handler: handler))
-            }
-            self.init(leftItem: left, title: title, rightItem: right)
+        public init(title: String, leftItem: BarButtonItem = .none, rightItem: BarButtonItem = .none) {
+            self.init(title: .text(title), leftItem: leftItem, rightItem: rightItem)
         }
 
-        public struct BarButtonViewModel {
-            var labelType: LabelType
-            var handler: () -> Void
+    }
+}
 
-            public enum LabelType {
-                case text(String)
-                case image(UIImage)
-            }
 
-            public init(labelType: LabelType, handler: @escaping () -> Void) {
-                self.labelType = labelType
-                self.handler = handler
-            }
+extension BackStackScreen.BarContent {
+    public enum Title {
+        case none
+        case text(String)
+    }
 
+    public enum ButtonContent {
+        case text(String)
+        case icon(UIImage)
+    }
+
+    public struct Button {
+        var content: ButtonContent
+        var handler: () -> Void
+
+        public init(content: ButtonContent, handler: @escaping () -> Void) {
+            self.content = content
+            self.handler = handler
+        }
+
+        /// Convenience factory for a default back button.
+        public static func back(handler: @escaping () -> Void) -> Button {
+            return Button(content: .text("Back"), handler: handler)
         }
     }
 }
