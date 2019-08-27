@@ -16,6 +16,10 @@ To help with the setup, there are already created a few helpers:
     - Additionally, there is a `TutorialContainerViewController` that the appdelegate sets as the root view controller. This will be our launching point for all of our workflows.
 - `TutorialFinal`: This is an example of the completed tutorial - could be used as a reference if you get stuck.
 
+## Getting up and running
+
+The tutorial uses cocoapods as the dependency management. To get set up, run `bundle install`, then `bundle exec pod install`. Open `Tutorial.xcworkspace`.
+
 # Tutorial Steps
 
 - [Tutorial 1](Tutorial1.md) - Single view backed by a workflow

@@ -50,7 +50,7 @@ First, let's add the convenient `WelcomeView` to our view controller (if you wou
 // Import the `TutorialViews` module for the `WelcomeView`
 import TutorialViews
 
-final class WelcomeViewController: SquareScreenViewController<WelcomeScreen> {
+final class WelcomeViewController: ScreenViewController<WelcomeScreen> {
     var welcomeView: WelcomeView
 
     required init(screen: WelcomeScreen, viewRegistry: ViewRegistry) {
