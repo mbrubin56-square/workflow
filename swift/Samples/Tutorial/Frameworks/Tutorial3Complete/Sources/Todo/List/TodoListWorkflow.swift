@@ -140,10 +140,10 @@ extension TodoListWorkflow {
             screen: todoListScreen,
             barContent: BackStackScreen.BarContent(
                 title: "Welcome \(name)",
-                leftItem: .back(handler: {
+                leftItem: .button(.back(handler: {
                     // When the left button is tapped, send the .onBack action.
                     sink.send(.onBack)
-                }),
+                })),
                 rightItem: .none))
 
         switch state.step {

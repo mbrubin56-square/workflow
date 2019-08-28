@@ -130,14 +130,14 @@ extension TodoEditWorkflow {
             screen: todoEditScreen,
             barContent: BackStackScreen.BarContent(
                 title: "Edit",
-                leftItem: .back(handler: {
+                leftItem: .button(.back(handler: {
                     sink.send(.discardChanges)
-                }),
-                rightItem: .button(
+                })),
+                rightItem: .button(BackStackScreen.BarContent.Button(
                     content: .text("Save"),
                     handler: {
                         sink.send(.saveChanges)
-                })))
+                }))))
         return backStackItem
     }
 }

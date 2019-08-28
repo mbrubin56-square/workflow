@@ -141,9 +141,9 @@ extension RootWorkflow {
                 barContent: BackStackScreen.BarContent(
                     title: "Welcome \(name)",
                     // When `back` is pressed, emit the .logout action to return to the welcome screen.
-                    leftItem: .back(handler: {
+                    leftItem: .button(.back(handler: {
                         sink.send(.logout)
-                    }),
+                    })),
                     rightItem: .none))
 
             // Add the TodoListScreen to our BackStackItems.
